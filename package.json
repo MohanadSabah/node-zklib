@@ -25,6 +25,12 @@
   },
   "homepage": "https://github.com/caobo171/node-zklib#readme",
   "dependencies": {
-    "node-zklib": "^1.0.0"
+    "axios": "^1.6.1",
+    "dayjs": "^1.11.10",
+    "express": "^4.18.2",
+    "memory-cache": "^0.2.0",
+    "node-cron": "^3.0.3",
+    "node-zklib": "^1.0.0",
+    "winston": "^3.11.0"
   }
 }
