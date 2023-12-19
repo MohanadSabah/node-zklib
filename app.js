@@ -4,20 +4,22 @@ const cron = require("node-cron");
 const axios = require("axios");
 const zkEvents = require("./zkEvents");
 const logger = require('./logger'); // Import the logger module
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Define the job that runs every 10 minutes
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/1 * * * *", async () => {
   try {
+    await zkEvents.Connect();
     var attendances = await zkEvents.getAttendances();
     let data = JSON.stringify({ data: attendances });
-
+    console.log(attendances)
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://hrms-api-test.halasat.com/api/v1/multi-checkin-out",
+      url: "https://hrms-api.halasat.com/api/v1/multi-checkin-out",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Basic YWRtaW46YWRtaW4yMDIz",
@@ -31,23 +33,25 @@ cron.schedule("*/5 * * * *", async () => {
         logger.info(JSON.stringify(response.data));
       })
       .catch((error) => {
-        logger.error(error);
+        console.log(JSON.stringify(error.data.errors))
       });
   } catch (error) {
     logger.error('error in schedule CRON');
-    logger.error(error);
+    logger.error(JSON.stringify(error));
+    await zkEvents.Disconnect();
   }
+  await zkEvents.Disconnect();
 });
 
 // Start the Express app
 app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  try {
-    await zkEvents.Connect();
-    logger.info("Connection successful");
-    // var attendances = await zkEvents.getAttendances();
-    // console.log(attendances);
-  } catch (error) {
-    console.error("Connection or attendance retrieval failed:", error);
-  }
+  // try {
+  //   await zkEvents.Connect();
+  //   logger.info("Connection successful");
+  //   // var attendances = await zkEvents.getAttendances();
+  //   // console.log(attendances);
+  // } catch (error) {
+  //   console.error("Connection or attendance retrieval failed:", error);
+  // }
 });
