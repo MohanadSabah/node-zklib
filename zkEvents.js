@@ -1,7 +1,11 @@
 const ZKLib = require("./zklib");
 const dayjs = require("dayjs");
 const cache = require("memory-cache");
-const deviceIp='172.16.254.194';
+require('dotenv').config();
+
+const deviceIp= process.env.FP_IP|| "172.16.254.194";
+
+
 const ATTENDANCE_CACHE_KEY = deviceIp; // to save the time of the last job
 
 // Create instances for two devices
